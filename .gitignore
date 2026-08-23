@@ -16,10 +16,6 @@ crash.*.log
 *.tfvars.json
 !*.tfvars.example
 
-# Environment/secrets
-.env
-.env.*
-
 # OS/editor cruft
 .DS_Store
 .idea/
