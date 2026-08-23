@@ -1,0 +1,26 @@
+# Go
+greeter
+*.exe
+*.test
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+
+# Terraform var files that may hold secrets/env-specific values
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# Environment/secrets
+.env
+.env.*
+
+# OS/editor cruft
+.DS_Store
+.idea/
+.vscode/
