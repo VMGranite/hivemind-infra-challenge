@@ -12,9 +12,9 @@ crash.log
 crash.*.log
 
 # Terraform var files that may hold secrets/env-specific values
-*.tfvars
-*.tfvars.json
-!*.tfvars.example
+# *.tfvars
+# *.tfvars.json
+# !*.tfvars.example
 
 # OS/editor cruft
 .DS_Store
