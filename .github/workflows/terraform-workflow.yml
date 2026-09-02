@@ -69,7 +69,11 @@ jobs:
       - name: Terraform Plan
         if: github.event_name == 'push' || inputs.action == 'plan' || inputs.action == 'apply'
         run: terraform plan -var-file=environments/dev.tfvars
+        env:
+          TF_VAR_ecr_access_principal_arn: ${{ secrets.AWS_ROLE_ARN }}
 
       - name: Terraform Apply
         if: inputs.action == 'apply'
         run: terraform apply -auto-approve -var-file=environments/dev.tfvars
+        env:
+          TF_VAR_ecr_access_principal_arn: ${{ secrets.AWS_ROLE_ARN }}
