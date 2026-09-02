@@ -1,0 +1,10 @@
+services:
+  greeter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      HELLO_TAG: local-dev
+    restart: unless-stopped
