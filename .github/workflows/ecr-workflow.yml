@@ -15,13 +15,15 @@ permissions:
 
 env:
   AWS_REGION: eu-north-1
-  ECR_REPOSITORY: hivemind-greeter
 
 jobs:
   build-and-push:
     name: Build & Push to ECR
     runs-on: ubuntu-latest
     environment: dev
+    defaults:
+      run:
+        working-directory: infra
     steps:
       - uses: actions/checkout@v4
 
@@ -30,23 +32,28 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Get AWS account ID
-        id: account
-        run: echo "id=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_OUTPUT"
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init -backend-config=backend-configs/dev.hcl
+
+      - name: Get ECR repository URL
+        id: ecr_repo
+        run: echo "url=$(terraform output -raw ecr_repository_url)" >> "$GITHUB_OUTPUT"
 
       - name: Login to ECR
-        run: |
-          aws ecr get-login-password --region "$AWS_REGION" \
-            | docker login --username AWS --password-stdin "${{ steps.account.outputs.id }}.dkr.ecr.$AWS_REGION.amazonaws.com"
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Get image tag
         id: image_tag
-        run: echo "tag=$(date -u +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
+        run: echo "tag=$(date -u +%Y%m%d-%H%M%S)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push image
+        working-directory: .
         env:
-          REGISTRY: ${{ steps.account.outputs.id }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          REPO_URL: ${{ steps.ecr_repo.outputs.url }}
           IMAGE_TAG: ${{ steps.image_tag.outputs.tag }}
         run: |
-          docker build -t "$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
-          docker push "$REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build -t "$REPO_URL:$IMAGE_TAG" .
+          docker push "$REPO_URL:$IMAGE_TAG"
