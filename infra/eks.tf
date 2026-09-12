@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "eks_cluster_auto_mode" {
-  name = "hivemind_dev_eks"
+  name = "hivemind_${var.environment}_eks"
 
   access_config {
     authentication_mode = "API"
@@ -33,6 +33,11 @@ resource "aws_eks_cluster" "eks_cluster_auto_mode" {
     endpoint_public_access  = true
 
     subnet_ids = aws_subnet.private[*].id
+  }
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = var.managedByTerraform
   }
 
   depends_on = [

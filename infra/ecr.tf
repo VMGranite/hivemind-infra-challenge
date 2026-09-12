@@ -1,7 +1,7 @@
 module "ecr" {
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name                   = "hivemind-dev-ecr-private"
+  repository_name                   = "hivemind-${var.environment}-ecr-private"
   repository_read_write_access_arns = [var.ecr_access_principal_arn]
   repository_image_scan_on_push     = true
   repository_image_tag_mutability   = "IMMUTABLE"
@@ -24,7 +24,7 @@ module "ecr" {
   })
 
   tags = {
-    Terraform   = "true"
     Environment = var.environment
+    ManagedBy   = var.managedByTerraform
   }
 }
