@@ -1,5 +1,5 @@
 resource "aws_iam_role" "node" {
-  name = "eks-auto-node-example"
+  name = "hivemind-${var.environment}-eks-auto-node"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -12,6 +12,11 @@ resource "aws_iam_role" "node" {
       },
     ]
   })
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = var.managedByTerraform
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodeMinimalPolicy" {
@@ -25,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryPullOn
 }
 
 resource "aws_iam_role" "cluster" {
-  name = "eks-cluster-example"
+  name = "hivemind-${var.environment}-eks-cluster"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -41,6 +46,11 @@ resource "aws_iam_role" "cluster" {
       },
     ]
   })
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = var.managedByTerraform
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
