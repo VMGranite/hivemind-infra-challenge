@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "eks_cluster_auto_mode" {
-  name = "hivemind_${var.environment}_eks"
+  name = local.cluster_name
 
   access_config {
     authentication_mode = "API"
